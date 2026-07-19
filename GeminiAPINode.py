@@ -9,10 +9,11 @@ from PIL import Image
 
 p = os.path.dirname(os.path.realpath(__file__))
 
+
 def get_gemini_api_key():
     try:
         config_path = os.path.join(p, 'config.json')
-        with open(config_path, 'r') as f:  
+        with open(config_path, 'r') as f:
             config = json.load(f)
         api_key = config["GEMINI_API_KEY"]
     except:
@@ -20,24 +21,63 @@ def get_gemini_api_key():
         return ""
     return api_key
 
+
 class Gemini_API_Zho:
 
     def __init__(self, api_key=None):
         self.api_key = api_key
         if self.api_key is not None:
-            genai.configure(api_key=self.api_key,transport='rest')
+            genai.configure(api_key=self.api_key, transport='rest')
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "prompt": ("STRING", {"default": "What is the meaning of life?", "multiline": True}),
-                "model_name": (["gemini-pro", "gemini-pro-vision", "gemini-1.5-pro-latest"],),
+                "model_name": ([
+                                   "gemini-2.5-flash-lite",
+                                   "gemini-2.5-flash",
+                                   "gemma-4-31b",
+                                   "gemma-4-26b",
+                                   "antigravity",
+                                   "deep-research-pro-preview",
+                                   "gemini-2-flash",
+                                   "gemini-2-flash-lite",
+                                   "computer-use-preview",
+                                   "nano-banana",
+                                   "gemini-2.5-flash-tts",
+                                   "gemini-2.5-pro",
+                                   "gemini-2.5-pro-tts",
+                                   "gemini-3-flash",
+                                   "nano-banana-pro",
+                                   "gemini-3.1-pro",
+                                   "nano-banana-2",
+                                   "gemini-3.1-flash-lite",
+                                   "nano-banana-2-lite",
+                                   "gemini-3.1-flash-tts",
+                                   "gemini-3.5-flash",
+                                   "gemini-embedding-1",
+                                   "gemini-embedding-2",
+                                   "gemini-omni-flash",
+                                   "gemini-robotics-er-1.5-preview",
+                                   "gemini-robotics-er-1.6-preview",
+                                   "imagen-4-fast-generate",
+                                   "imagen-4-generate",
+                                   "imagen-4-ultra-generate",
+                                   "lyria-3-clip",
+                                   "lyria-3-pro",
+                                   "veo-3-fast-generate",
+                                   "veo-3-generate",
+                                   "veo-3-lite-generate",
+                                   "gemini-2.5-flash-native-audio-dialog",
+                                   "gemini-3-flash-live",
+                                   "gemini-3.5-live-translate"
+                               ],),
                 "stream": ("BOOLEAN", {"default": False}),
                 "api_key": ("STRING", {"default": ""})  # Add api_key as an input
             },
             "optional": {
-                "image": ("IMAGE",),  
+                "image": ("IMAGE",),
             }
         }
 
@@ -50,11 +90,11 @@ class Gemini_API_Zho:
     def tensor_to_image(self, tensor):
         # 确保张量是在CPU上
         tensor = tensor.cpu()
-    
+
         # 将张量数据转换为0-255范围并转换为整数
         # 这里假设张量已经是H x W x C格式
         image_np = tensor.squeeze().mul(255).clamp(0, 255).byte().numpy()
-    
+
         # 创建PIL图像
         image = Image.fromarray(image_np, mode='RGB')
         return image
@@ -62,7 +102,7 @@ class Gemini_API_Zho:
     def generate_content(self, prompt, model_name, stream, api_key, image=None):
         if api_key:
             self.api_key = api_key
-            genai.configure(api_key=self.api_key,transport='rest')
+            genai.configure(api_key=self.api_key, transport='rest')
         if not self.api_key:
             raise ValueError("API key is required")
 
@@ -75,7 +115,7 @@ class Gemini_API_Zho:
             else:
                 response = model.generate_content(prompt)
                 textoutput = response.text
-        
+
         if model_name == 'gemini-pro-vision':
             if image == None:
                 raise ValueError("gemini-pro-vision needs image")
@@ -110,7 +150,7 @@ class Gemini_API_Zho:
                 else:
                     response = model.generate_content([prompt, pil_image])
                     textoutput = response.text
-        
+
         return (textoutput,)
 
 
@@ -119,7 +159,7 @@ class Gemini_API_Vsion_ImgURL_Zho:
     def __init__(self, api_key=None):
         self.api_key = api_key
         if self.api_key is not None:
-            genai.configure(api_key=self.api_key,transport='rest')
+            genai.configure(api_key=self.api_key, transport='rest')
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -127,7 +167,45 @@ class Gemini_API_Vsion_ImgURL_Zho:
             "required": {
                 "prompt": ("STRING", {"default": "Describe this image", "multiline": True}),
                 "image_url": ("STRING", {"default": ""}),
-                "model_name": (["gemini-pro-vision", "gemini-1.5-pro-latest"],),
+                "model_name": ([
+                                   "gemini-2.5-flash-lite",
+                                   "gemini-2.5-flash",
+                                   "gemma-4-31b",
+                                   "gemma-4-26b",
+                                   "antigravity",
+                                   "deep-research-pro-preview",
+                                   "gemini-2-flash",
+                                   "gemini-2-flash-lite",
+                                   "computer-use-preview",
+                                   "nano-banana",
+                                   "gemini-2.5-flash-tts",
+                                   "gemini-2.5-pro",
+                                   "gemini-2.5-pro-tts",
+                                   "gemini-3-flash",
+                                   "nano-banana-pro",
+                                   "gemini-3.1-pro",
+                                   "nano-banana-2",
+                                   "gemini-3.1-flash-lite",
+                                   "nano-banana-2-lite",
+                                   "gemini-3.1-flash-tts",
+                                   "gemini-3.5-flash",
+                                   "gemini-embedding-1",
+                                   "gemini-embedding-2",
+                                   "gemini-omni-flash",
+                                   "gemini-robotics-er-1.5-preview",
+                                   "gemini-robotics-er-1.6-preview",
+                                   "imagen-4-fast-generate",
+                                   "imagen-4-generate",
+                                   "imagen-4-ultra-generate",
+                                   "lyria-3-clip",
+                                   "lyria-3-pro",
+                                   "veo-3-fast-generate",
+                                   "veo-3-generate",
+                                   "veo-3-lite-generate",
+                                   "gemini-2.5-flash-native-audio-dialog",
+                                   "gemini-3-flash-live",
+                                   "gemini-3.5-live-translate"
+                               ],),
                 "stream": ("BOOLEAN", {"default": False}),
                 "api_key": ("STRING", {"default": ""})  # Add api_key as an input
             }
@@ -142,7 +220,7 @@ class Gemini_API_Vsion_ImgURL_Zho:
     def generate_content(self, prompt, model_name, stream, api_key, image_url):
         if api_key:
             self.api_key = api_key
-            genai.configure(api_key=self.api_key,transport='rest')
+            genai.configure(api_key=self.api_key, transport='rest')
         if not self.api_key:
             raise ValueError("API key is required")
 
@@ -160,28 +238,67 @@ class Gemini_API_Vsion_ImgURL_Zho:
         else:
             response = model.generate_content([prompt, img])
             textoutput = response.text
-        
+
         return (textoutput,)
 
-#chat
+
+# chat
 class Gemini_API_Chat_Zho:
 
     def __init__(self, api_key=None):
         self.api_key = api_key
         self.chat = None  # 初始化时，聊天实例为空
         if self.api_key is not None:
-            genai.configure(api_key=self.api_key,transport='rest')
+            genai.configure(api_key=self.api_key, transport='rest')
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "prompt": ("STRING", {"default": "What is the meaning of life?", "multiline": True}),
-                "model_name": (["gemini-pro", "gemini-1.5-pro-latest"],),
+                "model_name": ([
+                                   "gemini-2.5-flash-lite",
+                                   "gemini-2.5-flash",
+                                   "gemma-4-31b",
+                                   "gemma-4-26b",
+                                   "antigravity",
+                                   "deep-research-pro-preview",
+                                   "gemini-2-flash",
+                                   "gemini-2-flash-lite",
+                                   "computer-use-preview",
+                                   "nano-banana",
+                                   "gemini-2.5-flash-tts",
+                                   "gemini-2.5-pro",
+                                   "gemini-2.5-pro-tts",
+                                   "gemini-3-flash",
+                                   "nano-banana-pro",
+                                   "gemini-3.1-pro",
+                                   "nano-banana-2",
+                                   "gemini-3.1-flash-lite",
+                                   "nano-banana-2-lite",
+                                   "gemini-3.1-flash-tts",
+                                   "gemini-3.5-flash",
+                                   "gemini-embedding-1",
+                                   "gemini-embedding-2",
+                                   "gemini-omni-flash",
+                                   "gemini-robotics-er-1.5-preview",
+                                   "gemini-robotics-er-1.6-preview",
+                                   "imagen-4-fast-generate",
+                                   "imagen-4-generate",
+                                   "imagen-4-ultra-generate",
+                                   "lyria-3-clip",
+                                   "lyria-3-pro",
+                                   "veo-3-fast-generate",
+                                   "veo-3-generate",
+                                   "veo-3-lite-generate",
+                                   "gemini-2.5-flash-native-audio-dialog",
+                                   "gemini-3-flash-live",
+                                   "gemini-3.5-live-translate"
+                               ],),
                 "api_key": ("STRING", {"default": ""})  # Add api_key as an input
             },
             "optional": {
-                "image": ("IMAGE",),  
+                "image": ("IMAGE",),
             }
         }
 
@@ -190,11 +307,11 @@ class Gemini_API_Chat_Zho:
     FUNCTION = "generate_chat"
 
     CATEGORY = "Zho模块组/✨Gemini"
-    
+
     def generate_chat(self, prompt, model_name, api_key):
         if api_key:
             self.api_key = api_key
-            genai.configure(api_key=self.api_key,transport='rest')
+            genai.configure(api_key=self.api_key, transport='rest')
         if not self.api_key:
             raise ValueError("API key is required")
 
@@ -219,7 +336,7 @@ class Gemini_API_Chat_Zho:
                 response = self.chat.send_message([prompt, pil_image])
                 textoutput = response.text
                 chat_history = self.format_chat_history(self.chat)
-        
+
         return (chat_history,)
 
     def format_chat_history(self, chat):
@@ -236,18 +353,56 @@ class Gemini_API_S_Zho:
     def __init__(self):
         self.api_key = get_gemini_api_key()
         if self.api_key is not None:
-            genai.configure(api_key=self.api_key,transport='rest')
+            genai.configure(api_key=self.api_key, transport='rest')
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "prompt": ("STRING", {"default": "What is the meaning of life?", "multiline": True}),
-                "model_name": (["gemini-pro", "gemini-pro-vision", "gemini-1.5-pro-latest"],),
+                "model_name": ([
+                                   "gemini-2.5-flash-lite",
+                                   "gemini-2.5-flash",
+                                   "gemma-4-31b",
+                                   "gemma-4-26b",
+                                   "antigravity",
+                                   "deep-research-pro-preview",
+                                   "gemini-2-flash",
+                                   "gemini-2-flash-lite",
+                                   "computer-use-preview",
+                                   "nano-banana",
+                                   "gemini-2.5-flash-tts",
+                                   "gemini-2.5-pro",
+                                   "gemini-2.5-pro-tts",
+                                   "gemini-3-flash",
+                                   "nano-banana-pro",
+                                   "gemini-3.1-pro",
+                                   "nano-banana-2",
+                                   "gemini-3.1-flash-lite",
+                                   "nano-banana-2-lite",
+                                   "gemini-3.1-flash-tts",
+                                   "gemini-3.5-flash",
+                                   "gemini-embedding-1",
+                                   "gemini-embedding-2",
+                                   "gemini-omni-flash",
+                                   "gemini-robotics-er-1.5-preview",
+                                   "gemini-robotics-er-1.6-preview",
+                                   "imagen-4-fast-generate",
+                                   "imagen-4-generate",
+                                   "imagen-4-ultra-generate",
+                                   "lyria-3-clip",
+                                   "lyria-3-pro",
+                                   "veo-3-fast-generate",
+                                   "veo-3-generate",
+                                   "veo-3-lite-generate",
+                                   "gemini-2.5-flash-native-audio-dialog",
+                                   "gemini-3-flash-live",
+                                   "gemini-3.5-live-translate"
+                               ],),
                 "stream": ("BOOLEAN", {"default": False}),
             },
             "optional": {
-                "image": ("IMAGE",),  
+                "image": ("IMAGE",),
             }
         }
 
@@ -260,11 +415,11 @@ class Gemini_API_S_Zho:
     def tensor_to_image(self, tensor):
         # 确保张量是在CPU上
         tensor = tensor.cpu()
-    
+
         # 将张量数据转换为0-255范围并转换为整数
         # 这里假设张量已经是H x W x C格式
         image_np = tensor.squeeze().mul(255).clamp(0, 255).byte().numpy()
-    
+
         # 创建PIL图像
         image = Image.fromarray(image_np, mode='RGB')
         return image
@@ -282,7 +437,7 @@ class Gemini_API_S_Zho:
             else:
                 response = model.generate_content(prompt)
                 textoutput = response.text
-        
+
         if model_name == 'gemini-pro-vision':
             if image == None:
                 raise ValueError("gemini-pro-vision needs image")
@@ -317,7 +472,7 @@ class Gemini_API_S_Zho:
                 else:
                     response = model.generate_content([prompt, pil_image])
                     textoutput = response.text
-        
+
         return (textoutput,)
 
 
@@ -326,7 +481,7 @@ class Gemini_API_S_Vsion_ImgURL_Zho:
     def __init__(self):
         self.api_key = get_gemini_api_key()
         if self.api_key is not None:
-            genai.configure(api_key=self.api_key,transport='rest')
+            genai.configure(api_key=self.api_key, transport='rest')
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -334,7 +489,45 @@ class Gemini_API_S_Vsion_ImgURL_Zho:
             "required": {
                 "prompt": ("STRING", {"default": "Describe this image", "multiline": True}),
                 "image_url": ("STRING", {"default": ""}),
-                "model_name": (["gemini-pro-vision", "gemini-1.5-pro-latest"],),
+                "model_name": ([
+                                   "gemini-2.5-flash-lite",
+                                   "gemini-2.5-flash",
+                                   "gemma-4-31b",
+                                   "gemma-4-26b",
+                                   "antigravity",
+                                   "deep-research-pro-preview",
+                                   "gemini-2-flash",
+                                   "gemini-2-flash-lite",
+                                   "computer-use-preview",
+                                   "nano-banana",
+                                   "gemini-2.5-flash-tts",
+                                   "gemini-2.5-pro",
+                                   "gemini-2.5-pro-tts",
+                                   "gemini-3-flash",
+                                   "nano-banana-pro",
+                                   "gemini-3.1-pro",
+                                   "nano-banana-2",
+                                   "gemini-3.1-flash-lite",
+                                   "nano-banana-2-lite",
+                                   "gemini-3.1-flash-tts",
+                                   "gemini-3.5-flash",
+                                   "gemini-embedding-1",
+                                   "gemini-embedding-2",
+                                   "gemini-omni-flash",
+                                   "gemini-robotics-er-1.5-preview",
+                                   "gemini-robotics-er-1.6-preview",
+                                   "imagen-4-fast-generate",
+                                   "imagen-4-generate",
+                                   "imagen-4-ultra-generate",
+                                   "lyria-3-clip",
+                                   "lyria-3-pro",
+                                   "veo-3-fast-generate",
+                                   "veo-3-generate",
+                                   "veo-3-lite-generate",
+                                   "gemini-2.5-flash-native-audio-dialog",
+                                   "gemini-3-flash-live",
+                                   "gemini-3.5-live-translate"
+                               ],),
                 "stream": ("BOOLEAN", {"default": False}),
             }
         }
@@ -363,28 +556,66 @@ class Gemini_API_S_Vsion_ImgURL_Zho:
         else:
             response = model.generate_content([prompt, img])
             textoutput = response.text
-        
+
         return (textoutput,)
 
 
-#chat
+# chat
 class Gemini_API_S_Chat_Zho:
 
     def __init__(self):
         self.api_key = get_gemini_api_key()
         self.chat = None  # 初始化时，聊天实例为空
         if self.api_key is not None:
-            genai.configure(api_key=self.api_key,transport='rest')
+            genai.configure(api_key=self.api_key, transport='rest')
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "prompt": ("STRING", {"default": "What is the meaning of life?", "multiline": True}),
-                "model_name": (["gemini-pro", "gemini-1.5-pro-latest"],),
+                "model_name": ([
+                                   "gemini-2.5-flash-lite",
+                                   "gemini-2.5-flash",
+                                   "gemma-4-31b",
+                                   "gemma-4-26b",
+                                   "antigravity",
+                                   "deep-research-pro-preview",
+                                   "gemini-2-flash",
+                                   "gemini-2-flash-lite",
+                                   "computer-use-preview",
+                                   "nano-banana",
+                                   "gemini-2.5-flash-tts",
+                                   "gemini-2.5-pro",
+                                   "gemini-2.5-pro-tts",
+                                   "gemini-3-flash",
+                                   "nano-banana-pro",
+                                   "gemini-3.1-pro",
+                                   "nano-banana-2",
+                                   "gemini-3.1-flash-lite",
+                                   "nano-banana-2-lite",
+                                   "gemini-3.1-flash-tts",
+                                   "gemini-3.5-flash",
+                                   "gemini-embedding-1",
+                                   "gemini-embedding-2",
+                                   "gemini-omni-flash",
+                                   "gemini-robotics-er-1.5-preview",
+                                   "gemini-robotics-er-1.6-preview",
+                                   "imagen-4-fast-generate",
+                                   "imagen-4-generate",
+                                   "imagen-4-ultra-generate",
+                                   "lyria-3-clip",
+                                   "lyria-3-pro",
+                                   "veo-3-fast-generate",
+                                   "veo-3-generate",
+                                   "veo-3-lite-generate",
+                                   "gemini-2.5-flash-native-audio-dialog",
+                                   "gemini-3-flash-live",
+                                   "gemini-3.5-live-translate"
+                               ],),
             },
             "optional": {
-                "image": ("IMAGE",),  
+                "image": ("IMAGE",),
             }
         }
 
@@ -397,15 +628,15 @@ class Gemini_API_S_Chat_Zho:
     def tensor_to_image(self, tensor):
         # 确保张量是在CPU上
         tensor = tensor.cpu()
-    
+
         # 将张量数据转换为0-255范围并转换为整数
         # 这里假设张量已经是H x W x C格式
         image_np = tensor.squeeze().mul(255).clamp(0, 255).byte().numpy()
-    
+
         # 创建PIL图像
         image = Image.fromarray(image_np, mode='RGB')
         return image
-    
+
     def generate_chat(self, prompt, model_name):
         if not self.api_key:
             raise ValueError("API key is required")
@@ -431,7 +662,7 @@ class Gemini_API_S_Chat_Zho:
                 response = self.chat.send_message([prompt, pil_image])
                 textoutput = response.text
                 chat_history = self.format_chat_history(self.chat)
-        
+
         return (chat_history,)
 
     def format_chat_history(self, chat):
@@ -449,7 +680,7 @@ class Gemini_15P_API_S_Advance_Zho:
     def __init__(self):
         self.api_key = get_gemini_api_key()
         if self.api_key is not None:
-            genai.configure(api_key=self.api_key,transport='rest')
+            genai.configure(api_key=self.api_key, transport='rest')
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -457,11 +688,49 @@ class Gemini_15P_API_S_Advance_Zho:
             "required": {
                 "prompt": ("STRING", {"default": "What is the meaning of life?", "multiline": True}),
                 "system_instruction": ("STRING", {"default": "You are creating a prompt for Stable Diffusion to generate an image. First step: describe this image, then put description into text. Second step: generate a text prompt for %s based on first step.  Only respond with the prompt itself, but embellish it as needed but keep it under 80 tokens.", "multiline": True}),
-                "model_name": (["gemini-1.5-pro-latest"],),
+                "model_name": ([
+                                   "gemini-2.5-flash-lite",
+                                   "gemini-2.5-flash",
+                                   "gemma-4-31b",
+                                   "gemma-4-26b",
+                                   "antigravity",
+                                   "deep-research-pro-preview",
+                                   "gemini-2-flash",
+                                   "gemini-2-flash-lite",
+                                   "computer-use-preview",
+                                   "nano-banana",
+                                   "gemini-2.5-flash-tts",
+                                   "gemini-2.5-pro",
+                                   "gemini-2.5-pro-tts",
+                                   "gemini-3-flash",
+                                   "nano-banana-pro",
+                                   "gemini-3.1-pro",
+                                   "nano-banana-2",
+                                   "gemini-3.1-flash-lite",
+                                   "nano-banana-2-lite",
+                                   "gemini-3.1-flash-tts",
+                                   "gemini-3.5-flash",
+                                   "gemini-embedding-1",
+                                   "gemini-embedding-2",
+                                   "gemini-omni-flash",
+                                   "gemini-robotics-er-1.5-preview",
+                                   "gemini-robotics-er-1.6-preview",
+                                   "imagen-4-fast-generate",
+                                   "imagen-4-generate",
+                                   "imagen-4-ultra-generate",
+                                   "lyria-3-clip",
+                                   "lyria-3-pro",
+                                   "veo-3-fast-generate",
+                                   "veo-3-generate",
+                                   "veo-3-lite-generate",
+                                   "gemini-2.5-flash-native-audio-dialog",
+                                   "gemini-3-flash-live",
+                                   "gemini-3.5-live-translate"
+                               ],),
                 "stream": ("BOOLEAN", {"default": False}),
             },
             "optional": {
-                "image": ("IMAGE",),  
+                "image": ("IMAGE",),
             }
         }
 
@@ -474,11 +743,11 @@ class Gemini_15P_API_S_Advance_Zho:
     def tensor_to_image(self, tensor):
         # 确保张量是在CPU上
         tensor = tensor.cpu()
-    
+
         # 将张量数据转换为0-255范围并转换为整数
         # 这里假设张量已经是H x W x C格式
         image_np = tensor.squeeze().mul(255).clamp(0, 255).byte().numpy()
-    
+
         # 创建PIL图像
         image = Image.fromarray(image_np, mode='RGB')
         return image
@@ -517,7 +786,7 @@ class Gemini_15P_API_S_Chat_Advance_Zho:
         self.api_key = get_gemini_api_key()
         self.chat = None  # 初始化时，聊天实例为空
         if self.api_key is not None:
-            genai.configure(api_key=self.api_key,transport='rest')
+            genai.configure(api_key=self.api_key, transport='rest')
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -525,10 +794,48 @@ class Gemini_15P_API_S_Chat_Advance_Zho:
             "required": {
                 "prompt": ("STRING", {"default": "What is the meaning of life?", "multiline": True}),
                 "system_instruction": ("STRING", {"default": "You are creating a prompt for Stable Diffusion to generate an image. First step: describe this image, then put description into text. Second step: generate a text prompt for %s based on first step.  Only respond with the prompt itself, but embellish it as needed but keep it under 80 tokens.", "multiline": True}),
-                "model_name": (["gemini-1.5-pro-latest"],),
+                "model_name": ([
+                                   "gemini-2.5-flash-lite",
+                                   "gemini-2.5-flash",
+                                   "gemma-4-31b",
+                                   "gemma-4-26b",
+                                   "antigravity",
+                                   "deep-research-pro-preview",
+                                   "gemini-2-flash",
+                                   "gemini-2-flash-lite",
+                                   "computer-use-preview",
+                                   "nano-banana",
+                                   "gemini-2.5-flash-tts",
+                                   "gemini-2.5-pro",
+                                   "gemini-2.5-pro-tts",
+                                   "gemini-3-flash",
+                                   "nano-banana-pro",
+                                   "gemini-3.1-pro",
+                                   "nano-banana-2",
+                                   "gemini-3.1-flash-lite",
+                                   "nano-banana-2-lite",
+                                   "gemini-3.1-flash-tts",
+                                   "gemini-3.5-flash",
+                                   "gemini-embedding-1",
+                                   "gemini-embedding-2",
+                                   "gemini-omni-flash",
+                                   "gemini-robotics-er-1.5-preview",
+                                   "gemini-robotics-er-1.6-preview",
+                                   "imagen-4-fast-generate",
+                                   "imagen-4-generate",
+                                   "imagen-4-ultra-generate",
+                                   "lyria-3-clip",
+                                   "lyria-3-pro",
+                                   "veo-3-fast-generate",
+                                   "veo-3-generate",
+                                   "veo-3-lite-generate",
+                                   "gemini-2.5-flash-native-audio-dialog",
+                                   "gemini-3-flash-live",
+                                   "gemini-3.5-live-translate"
+                               ],),
             },
             "optional": {
-                "image": ("IMAGE",),  
+                "image": ("IMAGE",),
             }
         }
 
@@ -537,15 +844,15 @@ class Gemini_15P_API_S_Chat_Advance_Zho:
     FUNCTION = "generate_chat"
 
     CATEGORY = "Zho模块组/✨Gemini"
-    
+
     def tensor_to_image(self, tensor):
         # 确保张量是在CPU上
         tensor = tensor.cpu()
-    
+
         # 将张量数据转换为0-255范围并转换为整数
         # 这里假设张量已经是H x W x C格式
         image_np = tensor.squeeze().mul(255).clamp(0, 255).byte().numpy()
-    
+
         # 创建PIL图像
         image = Image.fromarray(image_np, mode='RGB')
         return image
@@ -570,7 +877,7 @@ class Gemini_15P_API_S_Chat_Advance_Zho:
                 response = self.chat.send_message([prompt, pil_image])
                 textoutput = response.text
                 chat_history = self.format_chat_history(self.chat)
-        
+
         return (chat_history,)
 
     def format_chat_history(self, chat):
@@ -588,7 +895,7 @@ class Gemini_FileUpload_API_S_Zho:
     def __init__(self):
         self.api_key = get_gemini_api_key()
         if self.api_key is not None:
-            genai.configure(api_key=self.api_key,transport='rest')
+            genai.configure(api_key=self.api_key, transport='rest')
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -618,7 +925,7 @@ class Gemini_File_API_S_Zho:
     def __init__(self):
         self.api_key = get_gemini_api_key()
         if self.api_key is not None:
-            genai.configure(api_key=self.api_key,transport='rest')
+            genai.configure(api_key=self.api_key, transport='rest')
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -626,7 +933,45 @@ class Gemini_File_API_S_Zho:
             "required": {
                 "file": ("FILE",),
                 "prompt": ("STRING", {"default": "Listen carefully to the following audio file. Provide a brief summary.", "multiline": True}),
-                "model_name": (["gemini-1.5-pro-latest"],),
+                "model_name": ([
+                                   "gemini-2.5-flash-lite",
+                                   "gemini-2.5-flash",
+                                   "gemma-4-31b",
+                                   "gemma-4-26b",
+                                   "antigravity",
+                                   "deep-research-pro-preview",
+                                   "gemini-2-flash",
+                                   "gemini-2-flash-lite",
+                                   "computer-use-preview",
+                                   "nano-banana",
+                                   "gemini-2.5-flash-tts",
+                                   "gemini-2.5-pro",
+                                   "gemini-2.5-pro-tts",
+                                   "gemini-3-flash",
+                                   "nano-banana-pro",
+                                   "gemini-3.1-pro",
+                                   "nano-banana-2",
+                                   "gemini-3.1-flash-lite",
+                                   "nano-banana-2-lite",
+                                   "gemini-3.1-flash-tts",
+                                   "gemini-3.5-flash",
+                                   "gemini-embedding-1",
+                                   "gemini-embedding-2",
+                                   "gemini-omni-flash",
+                                   "gemini-robotics-er-1.5-preview",
+                                   "gemini-robotics-er-1.6-preview",
+                                   "imagen-4-fast-generate",
+                                   "imagen-4-generate",
+                                   "imagen-4-ultra-generate",
+                                   "lyria-3-clip",
+                                   "lyria-3-pro",
+                                   "veo-3-fast-generate",
+                                   "veo-3-generate",
+                                   "veo-3-lite-generate",
+                                   "gemini-2.5-flash-native-audio-dialog",
+                                   "gemini-3-flash-live",
+                                   "gemini-3.5-live-translate"
+                               ],),
                 "stream": ("BOOLEAN", {"default": False}),
             }
         }
@@ -657,7 +1002,7 @@ class ConcatText_Zho:
 
     def __init__(self):
         pass
-    
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -686,16 +1031,15 @@ class ConcatText_Zho:
 class DisplayText_Zho:
     def __init__(self):
         pass
-    
+
     @classmethod
     def INPUT_TYPES(s):
-
         return {
-            "required": {        
-                "text": ("STRING", {"forceInput": True}),     
-                },
+            "required": {
+                "text": ("STRING", {"forceInput": True}),
+            },
             "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"},
-            }
+        }
 
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("text",)
@@ -705,7 +1049,7 @@ class DisplayText_Zho:
     CATEGORY = "Zho模块组/✨Gemini"
 
     def display_text(self, text, prompt=None, extra_pnginfo=None):
-        return {"ui": {"string": [text,]}, "result": (text,)}
+        return {"ui": {"string": [text, ]}, "result": (text,)}
 
 
 NODE_CLASS_MAPPINGS = {
