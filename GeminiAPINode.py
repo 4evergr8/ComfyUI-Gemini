@@ -108,7 +108,7 @@ class Gemini_API_Zho:
 
         model = genai.GenerativeModel(model_name)
 
-        if model_name == 'gemini-pro':
+        if model_name:
             if stream:
                 response = model.generate_content(prompt, stream=True)
                 textoutput = "\n".join([chunk.text for chunk in response])
@@ -116,7 +116,7 @@ class Gemini_API_Zho:
                 response = model.generate_content(prompt)
                 textoutput = response.text
 
-        if model_name == 'gemini-pro-vision':
+        if model_name :
             if image == None:
                 raise ValueError("gemini-pro-vision needs image")
             else:
@@ -131,7 +131,7 @@ class Gemini_API_Zho:
                     response = model.generate_content([prompt, pil_image])
                     textoutput = response.text
 
-        if model_name == 'gemini-1.5-pro-latest':
+        if model_name :
             if image == None:
                 if stream:
                     response = model.generate_content(prompt, stream=True)
@@ -319,12 +319,12 @@ class Gemini_API_Chat_Zho:
             model = genai.GenerativeModel(model_name)
             self.chat = model.start_chat(history=[])
 
-        if model_name == 'gemini-pro':
+        if model_name :
             response = self.chat.send_message(prompt)
             textoutput = response.text
             chat_history = self.format_chat_history(self.chat)
 
-        if model_name == 'gemini-1.5-pro-latest':
+        if model_name:
             if image == None:
                 response = self.chat.send_message(prompt)
                 textoutput = response.text
@@ -430,7 +430,7 @@ class Gemini_API_S_Zho:
 
         model = genai.GenerativeModel(model_name)
 
-        if model_name == 'gemini-pro':
+        if model_name :
             if stream:
                 response = model.generate_content(prompt, stream=True)
                 textoutput = "\n".join([chunk.text for chunk in response])
@@ -438,7 +438,7 @@ class Gemini_API_S_Zho:
                 response = model.generate_content(prompt)
                 textoutput = response.text
 
-        if model_name == 'gemini-pro-vision':
+        if model_name :
             if image == None:
                 raise ValueError("gemini-pro-vision needs image")
             else:
@@ -453,7 +453,7 @@ class Gemini_API_S_Zho:
                     response = model.generate_content([prompt, pil_image])
                     textoutput = response.text
 
-        if model_name == 'gemini-1.5-pro-latest':
+        if model_name :
             if image == None:
                 if stream:
                     response = model.generate_content(prompt, stream=True)
@@ -645,12 +645,12 @@ class Gemini_API_S_Chat_Zho:
             model = genai.GenerativeModel(model_name)
             self.chat = model.start_chat(history=[])
 
-        if model_name == 'gemini-pro':
+        if model_name :
             response = self.chat.send_message(prompt)
             textoutput = response.text
             chat_history = self.format_chat_history(self.chat)
 
-        if model_name == 'gemini-1.5-pro-latest':
+        if model_name :
             if image == None:
                 response = self.chat.send_message(prompt)
                 textoutput = response.text
@@ -865,7 +865,7 @@ class Gemini_15P_API_S_Chat_Advance_Zho:
             model = genai.GenerativeModel(model_name, system_instruction=system_instruction)
             self.chat = model.start_chat(history=[])
 
-        if model_name == 'gemini-1.5-pro-latest':
+        if model_name:
             if image == None:
                 response = self.chat.send_message(prompt)
                 textoutput = response.text
